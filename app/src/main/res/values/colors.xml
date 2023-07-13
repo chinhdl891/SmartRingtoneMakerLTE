@@ -62,11 +62,11 @@
     <color name="editor_zoom_color">#FFFFFF</color>
     <color name="editor_waveform_bg_color">#0d111a</color>
     <color name="editor_grind_paint_color">#8dffffff</color>
-    <color name="editor_border_line_paint_color">#8dffffff</color>
+    <color name="editor_border_line_paint_color">#8DFF0000</color>
     <color name="editor_main_background">#0d1220</color>
     <color name="editor_play_back_line_paint_color">#ffffff</color>
-    <color name="editor_selected_rectangle_color">#68afadad</color>
-    <color name="editor_mUnselectedline_color">#616161</color>
+    <color name="editor_selected_rectangle_color">#6898FF50</color>
+    <color name="editor_mUnselectedline_color">#FFC107</color>
     <color name="editor_toast_color">#f27127</color>
     <color name="editor_playpause_arrow_color">#0d1220</color>
 

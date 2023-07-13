@@ -56,9 +56,10 @@ import org.jetbrains.anko.yesButton
 import java.io.*
 
 
-class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ringtone.maker.SoundEditor.WaveformView.WaveformListener, View.OnClickListener {
+class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener,
+    com.ringtone.maker.SoundEditor.WaveformView.WaveformListener, View.OnClickListener {
     private var mSaveSoundFileThread: Thread? = null
-    private val Supported_Format = arrayOf(".aac", ".AMR", ".mp3", ".wav",".m4a")
+    private val Supported_Format = arrayOf(".aac", ".AMR", ".mp3", ".wav", ".m4a")
     private var mNewFileKind: Int = 0
     private var mMarkerLeftInset: Int = 0
     private var mMarkerRightInset: Int = 0
@@ -107,7 +108,6 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     private var mSharedPref: SharedPref? = null
 
 
-
     private val mTimerRunnable = object : Runnable {
         override fun run() {
             // Updating an EditText is slow on Android.  Make sure
@@ -130,7 +130,11 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.window.decorView.setBackgroundColor(ContextCompat.getColor(this, R.color.app_decorview_color))
+        this.window.decorView.setBackgroundColor(
+            ContextCompat.getColor(
+                this, R.color.app_decorview_color
+            )
+        )
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         setContentView(R.layout.activity_editor)
 
@@ -156,7 +160,11 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         Play_Pause_View!!.setOnClickListener(this)
 
         // temporary solution to fix the delay between initial pause to play animation
-        Play_Pause_View!!.postDelayed({ runOnUiThread { Play_Pause_View!!.visibility = View.VISIBLE } }, 400)
+        Play_Pause_View!!.postDelayed({
+            runOnUiThread {
+                Play_Pause_View!!.visibility = View.VISIBLE
+            }
+        }, 400)
 
         marginvalue = Pixels.pxtodp(this, 12)
         mPlayer = null
@@ -175,7 +183,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         } else {
             // remove mp3 part
             val newtitle: String
-            if (title!!.contains(EXTENSION_MP3)) newtitle = title.replace(EXTENSION_MP3, "") else newtitle = title.toString()
+            if (title!!.contains(EXTENSION_MP3)) newtitle =
+                title.replace(EXTENSION_MP3, "") else newtitle = title.toString()
             Editor_song_title!!.text = newtitle
             mFilename = path
 
@@ -191,12 +200,19 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
     private fun pickFile() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!PermissionManger.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) PermissionManger.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if (!PermissionManger.checkPermission(
+                    this, Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            ) PermissionManger.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
             else StartMediaPickerActivity()
         } else StartMediaPickerActivity()
     }
 
-    private fun StartMediaPickerActivity() = startActivityForResult(Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI), 200)
+    private fun StartMediaPickerActivity() = startActivityForResult(
+        Intent(
+            Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        ), 200
+    )
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -205,7 +221,13 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         if (resultCode == AppCompatActivity.RESULT_OK) {
             var mSoundTitle: String
             val dataUri = data.data
-            val proj = arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA, MediaStore.Audio.Albums.ALBUM_ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Artists.ARTIST)
+            val proj = arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Albums.ALBUM_ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Artists.ARTIST
+            )
             val tempCursor = managedQuery(dataUri, proj, null, null, null)
             tempCursor.moveToFirst() //reset the cursor
             var col_index: Int
@@ -253,7 +275,10 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
     private fun showExitOptionsDialog() {
 
-        val colors = arrayOf<CharSequence>(getString(R.string.editor_back_dialog_discard), getString(R.string.editor_back_dialog_cancel))
+        val colors = arrayOf<CharSequence>(
+            getString(R.string.editor_back_dialog_discard),
+            getString(R.string.editor_back_dialog_cancel)
+        )
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.editor_back_dialog_title)
         builder.setItems(colors) { dialog, which ->
@@ -319,6 +344,7 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
     override fun waveformTouchMove(x: Float) {
         mOffset = trap((mTouchInitialOffset + (mTouchStart - x)).toInt())
+        Log.e("mOffset", "$mOffset")
         updateDisplay()
     }
 
@@ -355,9 +381,14 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
             marginvalue = Pixels.pxtodp(this, 12)
             val params = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT)
-            params.setMargins(Pixels.pxtodp(this@Activity_Editor, 12), 0, Pixels.pxtodp(this@Activity_Editor, 12), Pixels.pxtodp(this@Activity_Editor, 20))
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(
+                Pixels.pxtodp(this@Activity_Editor, 12),
+                0,
+                Pixels.pxtodp(this@Activity_Editor, 12),
+                Pixels.pxtodp(this@Activity_Editor, 20)
+            )
             mWaveformView!!.layoutParams = params
 
         }
@@ -378,9 +409,14 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         if (!mWaveformView!!.canZoomOut()) {
             marginvalue = Pixels.pxtodp(this, 12)
             val params = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT)
-            params.setMargins(Pixels.pxtodp(this@Activity_Editor, 12), 0, Pixels.pxtodp(this@Activity_Editor, 12), Pixels.pxtodp(this@Activity_Editor, 20))
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(
+                Pixels.pxtodp(this@Activity_Editor, 12),
+                0,
+                Pixels.pxtodp(this@Activity_Editor, 12),
+                Pixels.pxtodp(this@Activity_Editor, 20)
+            )
             mWaveformView!!.layoutParams = params
 
         }
@@ -418,11 +454,11 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
         } else {
             mEndPos = trap((mTouchInitialEndPos + delta).toInt())
-            if (mEndPos < mStartPos + mStartMarker!!.width)
-                mEndPos = mStartPos + mStartMarker!!.width
+            if (mEndPos < mStartPos + mStartMarker!!.width) mEndPos =
+                mStartPos + mStartMarker!!.width
         }
 
-
+        Log.e("MarkerTouchMove", "$mStartPos   $mEndPos")
         updateDisplay()
     }
 
@@ -452,7 +488,7 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
             } else {
                 mEndPos = trap(mEndPos - velocity)
             }
-
+            Log.e("mOffset", "$mStartPos")
             setOffsetGoalEnd()
         }
 
@@ -465,23 +501,20 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         if (marker == mStartMarker) {
             val saveStart = mStartPos
             mStartPos += velocity
-            if (mStartPos > mMaxPos)
-                mStartPos = mMaxPos
+            if (mStartPos > mMaxPos) mStartPos = mMaxPos
             mEndPos += mStartPos - saveStart
-            if (mEndPos > mMaxPos)
-                mEndPos = mMaxPos
+            if (mEndPos > mMaxPos) mEndPos = mMaxPos
 
             setOffsetGoalStart()
         }
 
         if (marker == mEndMarker) {
             mEndPos += velocity
-            if (mEndPos > mMaxPos)
-                mEndPos = mMaxPos
+            if (mEndPos > mMaxPos) mEndPos = mMaxPos
 
             setOffsetGoalEnd()
         }
-
+        Log.e("mOffset", "$mStartPos")
         updateDisplay()
     }
 
@@ -625,12 +658,15 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
                 } catch (ignored: IOException) {
                     runOnUiThread {
-                        Toast.makeText(this@Activity_Editor, "Please try to change file name", Toast.LENGTH_LONG).show()
-                        AlertDialog.Builder(this@Activity_Editor)
-                                .setTitle(R.string.editor_error)
-                                .setMessage(R.string.editor_error_msg.toString() + " File name contains Special Characters Please change file name and try again.")
-                                .setPositiveButton(android.R.string.yes) { dialog, which -> pickFile() }
-                                .show()
+                        Toast.makeText(
+                            this@Activity_Editor,
+                            "Please try to change file name",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        AlertDialog.Builder(this@Activity_Editor).setTitle(R.string.editor_error)
+                            .setMessage(R.string.editor_error_msg.toString() + " File name contains Special Characters Please change file name and try again.")
+                            .setPositiveButton(android.R.string.yes) { dialog, which -> pickFile() }
+                            .show()
                     }
 
                     try {
@@ -655,7 +691,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         object : Thread() {
             override fun run() {
                 try {
-                    mSoundFile = com.ringtone.maker.SoundEditor.CheapSoundFile.create(mFile!!.absolutePath, listener)
+                    mSoundFile = com.ringtone.maker.SoundEditor.CheapSoundFile.create(
+                        mFile!!.absolutePath, listener
+                    )
                 } catch (e: Exception) {
                     //  Log.e(TAG, "Error while loading sound file" + e);
                     mProgressDialog!!.dismiss()
@@ -670,10 +708,10 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                             //Log.e(TAG, "run: editor_error" );
                             mProgressDialog!!.dismiss()
                             AlertDialog.Builder(this@Activity_Editor)
-                                    .setTitle(R.string.editor_error)
-                                    .setMessage(R.string.editor_error_msg)
-                                    .setPositiveButton(android.R.string.yes) { dialog, which -> pickFile() }
-                                    .show()
+                                .setTitle(R.string.editor_error)
+                                .setMessage(R.string.editor_error_msg)
+                                .setPositiveButton(android.R.string.yes) { dialog, which -> pickFile() }
+                                .show()
 
                         }
 
@@ -704,7 +742,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     }
 
     @SuppressLint("NewApi")
-    @Synchronized private fun updateDisplay() {
+    @Synchronized
+    private fun updateDisplay() {
         if (mPlayer != null) {
             mSoundDuration = mPlayer!!.duration / 1000
 
@@ -762,18 +801,14 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
             } else {
                 offsetDelta = mOffsetGoal - mOffset
 
-                if (offsetDelta > 10)
-                    offsetDelta = offsetDelta / 10
-                else if (offsetDelta > 0)
-                    offsetDelta = 1
-                else if (offsetDelta < -10)
-                    offsetDelta = offsetDelta / 10
-                else if (offsetDelta < 0)
-                    offsetDelta = -1
-                else
-                    offsetDelta = 0
+                if (offsetDelta > 10) offsetDelta = offsetDelta / 10
+                else if (offsetDelta > 0) offsetDelta = 1
+                else if (offsetDelta < -10) offsetDelta = offsetDelta / 10
+                else if (offsetDelta < 0) offsetDelta = -1
+                else offsetDelta = 0
 
                 mOffset += offsetDelta
+
             }
         }
 
@@ -833,11 +868,15 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         }
 
 
-        val layoutParamsStart = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        val layoutParamsStart = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
+        )
         layoutParamsStart.setMargins(startX + marginvalue, mWaveformView!!.measuredHeight, 0, 0)
 
         mStartMarker!!.layoutParams = layoutParamsStart
-        val layoutParamsEnd = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        val layoutParamsEnd = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
+        )
 
         // if the marker does notification_ic reach the end  margin endx + value
         if (endX + marginvalue <= mWaveformView!!.measuredWidth) {
@@ -845,7 +884,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         } else {
             // if endx is less or equal the maxmium width we fix the margin at wave width
             if (endX <= mWaveformView!!.measuredWidth) {
-                layoutParamsEnd.setMargins(mWaveformView!!.measuredWidth, mWaveformView!!.measuredHeight, 0, 0)
+                layoutParamsEnd.setMargins(
+                    mWaveformView!!.measuredWidth, mWaveformView!!.measuredHeight, 0, 0
+                )
                 // else we use the same endx as value for margin so it will disappear
             } else {
                 layoutParamsEnd.setMargins(endX, mWaveformView!!.measuredHeight, 0, 0)
@@ -876,8 +917,7 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     }
 
     private fun trap(pos: Int): Int {
-        if (pos < 0)
-            return 0
+        if (pos < 0) return 0
         return if (pos > mMaxPos) mMaxPos else pos
     }
 
@@ -897,10 +937,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         }
 
         mOffsetGoal = offset
-        if (mOffsetGoal + mWidth / 2 > mMaxPos)
-            mOffsetGoal = mMaxPos - mWidth / 2
-        if (mOffsetGoal < 0)
-            mOffsetGoal = 0
+        if (mOffsetGoal + mWidth / 2 > mMaxPos) mOffsetGoal = mMaxPos - mWidth / 2
+        if (mOffsetGoal < 0) mOffsetGoal = 0
     }
 
     private fun formatTime(pixels: Int): String {
@@ -923,13 +961,12 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
             }
         }
 
-        return if (xFrac < 10)
-            xWhole.toString() + ".0" + xFrac
-        else
-            xWhole.toString() + "." + xFrac
+        return if (xFrac < 10) xWhole.toString() + ".0" + xFrac
+        else xWhole.toString() + "." + xFrac
     }
 
-    @Synchronized private fun handlePause() {
+    @Synchronized
+    private fun handlePause() {
         if (mPlayer != null && mPlayer!!.isPlaying) {
             mPlayer!!.pause()
         }
@@ -940,7 +977,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     }
 
 
-    @Synchronized private fun onPlay(startPosition: Int) {
+    @Synchronized
+    private fun onPlay(startPosition: Int) {
         if (mIsPlaying) {
             handlePause()
             return
@@ -973,7 +1011,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                     mPlayer!!.reset()
                     mPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
                     val subsetInputStream = FileInputStream(mFile!!.absolutePath)
-                    mPlayer!!.setDataSource(subsetInputStream.fd, startByte.toLong(), (endByte - startByte).toLong())
+                    mPlayer!!.setDataSource(
+                        subsetInputStream.fd, startByte.toLong(), (endByte - startByte).toLong()
+                    )
                     mPlayer!!.prepare()
                     mPlayStartOffset = mPlayStartMsec
                 } catch (e: Exception) {
@@ -1016,33 +1056,50 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
         if (mEndPos != -1 || mStartPos != -1) {
 
-            val endpointbefore = java.lang.Float.valueOf(mWaveformView!!.pixelsToSeconds(mEndPos).toString())!!
+            val endpointbefore =
+                java.lang.Float.valueOf(mWaveformView!!.pixelsToSeconds(mEndPos).toString())!!
             val endpointafter = java.lang.Float.valueOf(endpoint.toString())!!
-            val propertyValuesHolder = PropertyValuesHolder.ofFloat("phase", endpointbefore, endpointafter)
+            val propertyValuesHolder =
+                PropertyValuesHolder.ofFloat("phase", endpointbefore, endpointafter)
 
 
-            val startpointBefore = java.lang.Float.valueOf(mWaveformView!!.pixelsToSeconds(mStartPos).toString())!!
+            val startpointBefore =
+                java.lang.Float.valueOf(mWaveformView!!.pixelsToSeconds(mStartPos).toString())!!
             val startpointAFter = java.lang.Float.valueOf(startpoint.toString())!!
-            val propertyValuesHolder2 = PropertyValuesHolder.ofFloat("phase2", startpointBefore, startpointAFter)
+            val propertyValuesHolder2 =
+                PropertyValuesHolder.ofFloat("phase2", startpointBefore, startpointAFter)
 
-            val mObjectAnimator = ObjectAnimator.ofPropertyValuesHolder(this, propertyValuesHolder, propertyValuesHolder2)
+            val mObjectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+                this, propertyValuesHolder, propertyValuesHolder2
+            )
 
             mObjectAnimator.addUpdateListener { valueAnimator ->
-                val newEndpos = java.lang.Float.valueOf(valueAnimator.getAnimatedValue(propertyValuesHolder.propertyName).toString())
+                val newEndpos = java.lang.Float.valueOf(
+                    valueAnimator.getAnimatedValue(propertyValuesHolder.propertyName).toString()
+                )
                 mEndPos = mWaveformView!!.secondsToPixels(newEndpos!!.toDouble())
-                val NewStartpos = java.lang.Float.valueOf(valueAnimator.getAnimatedValue(propertyValuesHolder2.propertyName).toString())
+                val NewStartpos = java.lang.Float.valueOf(
+                    valueAnimator.getAnimatedValue(propertyValuesHolder2.propertyName).toString()
+                )
 
                 mStartPos = mWaveformView!!.secondsToPixels(NewStartpos!!.toDouble())
-                mStartText!!.text = (newEndpos % 3600 / 60).toInt().toString() + ":" + (newEndpos % 60).toInt().toString()
-                mEndText!!.text = (NewStartpos % 3600 / 60).toInt().toString() + ":" + (NewStartpos % 60).toInt().toString()
+                mStartText!!.text =
+                    (newEndpos % 3600 / 60).toInt().toString() + ":" + (newEndpos % 60).toInt()
+                        .toString()
+                mEndText!!.text =
+                    (NewStartpos % 3600 / 60).toInt().toString() + ":" + (NewStartpos % 60).toInt()
+                        .toString()
                 updateDisplay()
 
             }
 
             mObjectAnimator.start()
 
-            mStartText!!.text = (startpoint % 3600 / 60).toInt().toString() + ":" + (startpoint % 60).toInt().toString()
-            mEndText!!.text = (endpoint % 3600 / 60).toInt().toString() + ":" + (endpoint % 60).toInt().toString()
+            mStartText!!.text =
+                (startpoint % 3600 / 60).toInt().toString() + ":" + (startpoint % 60).toInt()
+                    .toString()
+            mEndText!!.text =
+                (endpoint % 3600 / 60).toInt().toString() + ":" + (endpoint % 60).toInt().toString()
             mEndPos = mWaveformView!!.secondsToPixels(endpoint)
             mStartPos = mWaveformView!!.secondsToPixels(startpoint)
             updateDisplay()
@@ -1054,8 +1111,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
     }
 
 
-    fun setPhase(phase: Float) { }
-    fun setPhase2(phase2: Float) { }
+    fun setPhase(phase: Float) {}
+    fun setPhase2(phase2: Float) {}
 
 
     override fun onClick(view: View) {
@@ -1066,14 +1123,18 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
             view === image_Cancel -> runanimation()
             view == Play_Pause_View -> onPlay(mStartPos)
             view == mark_start -> if (mIsPlaying) {
-                mStartPos = mWaveformView!!.millisecsToPixels(mPlayer!!.currentPosition + mPlayStartOffset)
+                mStartPos =
+                    mWaveformView!!.millisecsToPixels(mPlayer!!.currentPosition + mPlayStartOffset)
                 updateDisplay()
             }
+
             view == mark_end -> if (mIsPlaying) {
-                mEndPos = mWaveformView!!.millisecsToPixels(mPlayer!!.currentPosition + mPlayStartOffset)
+                mEndPos =
+                    mWaveformView!!.millisecsToPixels(mPlayer!!.currentPosition + mPlayStartOffset)
                 updateDisplay()
                 handlePause()
             }
+
             else -> Cutselection(view.id)
         }
 
@@ -1116,7 +1177,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 
 
-                val animator = ViewAnimationUtils.createCircularReveal(optionsContainer, cx, cy, 0f, radius.toFloat())
+                val animator = ViewAnimationUtils.createCircularReveal(
+                    optionsContainer, cx, cy, 0f, radius.toFloat()
+                )
                 animator.setInterpolator(AccelerateDecelerateInterpolator())
                 val animator_reverse = animator.reverse()
 
@@ -1127,8 +1190,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                     editor_container!!.visibility = View.INVISIBLE
                 } else {
                     animator_reverse.addListener(object : SupportAnimator.AnimatorListener {
-                        override fun onAnimationStart() { }
-                        override fun onAnimationCancel() { }
+                        override fun onAnimationStart() {}
+                        override fun onAnimationCancel() {}
                         override fun onAnimationRepeat() {}
                         override fun onAnimationEnd() {
                             optionsContainer.visibility = View.INVISIBLE
@@ -1146,11 +1209,15 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                 if (Maskhidden) {
                     optionsContainer.visibility = View.VISIBLE
                     optionsContainer.requestLayout()
-                    android.view.ViewAnimationUtils.createCircularReveal(optionsContainer, cx, cy, 0f, radius.toFloat()).start()
+                    android.view.ViewAnimationUtils.createCircularReveal(
+                        optionsContainer, cx, cy, 0f, radius.toFloat()
+                    ).start()
                     Maskhidden = false
                     editor_container!!.visibility = View.INVISIBLE
                 } else {
-                    val anim = android.view.ViewAnimationUtils.createCircularReveal(optionsContainer, cx, cy, radius.toFloat(), 0f)
+                    val anim = android.view.ViewAnimationUtils.createCircularReveal(
+                        optionsContainer, cx, cy, radius.toFloat(), 0f
+                    )
                     anim.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
@@ -1176,18 +1243,22 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                 SaveRingTone()
                 mNewFileKind = FILE_KIND_RINGTONE
             }
+
             R.id.Editor_Notification -> {
                 SaveRingTone()
                 mNewFileKind = FILE_KIND_NOTIFICATION
             }
+
             R.id.Editor_Save -> {
                 SaveRingTone()
                 mNewFileKind = FILE_KIND_Save
             }
+
             R.id.Editor_Alarm -> {
                 SaveRingTone()
                 mNewFileKind = FILE_KIND_ALARM
             }
+
             R.id.Editor_Contacts -> {
                 if (PermissionManger.checkAndRequestContactsPermissions(this)) {
                     chooseContactForRingtone()
@@ -1206,7 +1277,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
 
     private fun SaveRingTone() {
-
+        mStartPos = mWaveformView!!.posCurrentL.toInt()
+        mEndPos = mWaveformView!!.posCurrentR.toInt()
         val startTime = mWaveformView!!.pixelsToSeconds(mStartPos)
         val endTime = mWaveformView!!.pixelsToSeconds(mEndPos)
 
@@ -1231,12 +1303,15 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         mSaveSoundFileThread = object : Thread() {
             override fun run() {
 
-                var outPath: String? = makeRingtoneFilename(Editor_song_title!!.text.toString(), ".mp3") ?: return
+                var outPath: String? =
+                    makeRingtoneFilename(Editor_song_title!!.text.toString(), ".mp3") ?: return
                 outputFile = File(outPath)
                 var fallbackToWAV: Boolean? = false
                 try {
                     // Write the new file
-                    mSoundFile!!.WriteFile(outputFile, startFrame, numFrames, false, false, fadeTime)
+                    mSoundFile!!.WriteFile(
+                        outputFile, startFrame, numFrames, false, false, fadeTime
+                    )
 
                 } catch (e: Exception) {
                     // log the error and try to create a .wav file instead
@@ -1251,14 +1326,15 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                 if (fallbackToWAV!!) {
                     outPath = makeRingtoneFilename(Editor_song_title!!.text.toString(), ".wav")
                     if (outPath == null) {
-                        val runnable = Runnable {
-                        }
+                        val runnable = Runnable {}
                         mHandler!!.post(runnable)
                         return
                     }
                     outputFile = File(outPath)
                     try {
-                        mSoundFile!!.writewavfile(outputFile, startFrame, numFrames, false, false, fadeTime)
+                        mSoundFile!!.writewavfile(
+                            outputFile, startFrame, numFrames, false, false, fadeTime
+                        )
 
 
                     } catch (e: Exception) {
@@ -1276,9 +1352,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
                 val finalOutPath = outPath
                 val runnable = Runnable {
-                    afterSavingRingtone(Editor_song_title!!.text.toString(),
-                            finalOutPath,
-                            duration, endTime)
+                    afterSavingRingtone(
+                        Editor_song_title!!.text.toString(), finalOutPath, duration, endTime
+                    )
                 }
                 mHandler!!.post(runnable)
                 mProgressDialog!!.dismiss()
@@ -1290,7 +1366,9 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
     }
 
-    private fun afterSavingRingtone(title: CharSequence, outPath: String?, duration: Int, endpoint: Double) {
+    private fun afterSavingRingtone(
+        title: CharSequence, outPath: String?, duration: Int, endpoint: Double
+    ) {
 
 
         val dbHelper = com.ringtone.maker.Database.DBHelper.getInstance(this)
@@ -1298,12 +1376,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         val fileSize = outFile.length()
         if (fileSize <= 512) {
             outFile.delete()
-            AlertDialog.Builder(this)
-                    .setTitle("Failure")
-                    .setMessage("File is too Small")
-                    .setPositiveButton("Ok", null)
-                    .setCancelable(false)
-                    .show()
+            AlertDialog.Builder(this).setTitle("Failure").setMessage("File is too Small")
+                .setPositiveButton("Ok", null).setCancelable(false).show()
             return
         }
 
@@ -1312,7 +1386,7 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         when {
             outPath.endsWith(".m4a") -> mimeType = "audio/mp4a-latm"
             outPath.endsWith(".wav") -> mimeType = "audio/wav"
-            else ->  mimeType = "audio/mpeg"
+            else -> mimeType = "audio/mpeg"
         }
 
         val artist = "Zatrek Ringtone Cutter"
@@ -1337,38 +1411,99 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
 
         when (mNewFileKind) {
             FILE_KIND_NOTIFICATION -> {
-                RingtoneManager.setActualDefaultRingtoneUri(this@Activity_Editor, RingtoneManager.TYPE_NOTIFICATION, newUri)
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    this@Activity_Editor, RingtoneManager.TYPE_NOTIFICATION, newUri
+                )
                 Songtype = com.ringtone.maker.Utils.Constants.NOTIFICATION_KEY
-                dbHelper.MarkSongAsSelected(title.toString(), MusicType.NOTIFICATION.toString(), duration * 1000, time, outPath, true)
-                dbHelper.MarkSongAsAlerted(title.toString(), MusicType.NOTIFICATION.toString(), duration * 1000, time, outPath, false)
+                dbHelper.MarkSongAsSelected(
+                    title.toString(),
+                    MusicType.NOTIFICATION.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    true
+                )
+                dbHelper.MarkSongAsAlerted(
+                    title.toString(),
+                    MusicType.NOTIFICATION.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    false
+                )
             }
+
             FILE_KIND_RINGTONE -> {
-                RingtoneManager.setActualDefaultRingtoneUri(this@Activity_Editor, RingtoneManager.TYPE_RINGTONE, newUri)
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    this@Activity_Editor, RingtoneManager.TYPE_RINGTONE, newUri
+                )
                 Songtype = com.ringtone.maker.Utils.Constants.RINGTONE_KEY
-                dbHelper.MarkSongAsSelected(title.toString(), MusicType.RINGTONE.toString(), duration * 1000, time, outPath, true)
-                dbHelper.MarkSongAsAlerted(title.toString(), MusicType.RINGTONE.toString(), duration * 1000, time, outPath, false)
+                dbHelper.MarkSongAsSelected(
+                    title.toString(),
+                    MusicType.RINGTONE.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    true
+                )
+                dbHelper.MarkSongAsAlerted(
+                    title.toString(),
+                    MusicType.RINGTONE.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    false
+                )
             }
+
             FILE_KIND_ALARM -> {
-                RingtoneManager.setActualDefaultRingtoneUri(this@Activity_Editor, RingtoneManager.TYPE_ALARM, newUri)
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    this@Activity_Editor, RingtoneManager.TYPE_ALARM, newUri
+                )
                 Songtype = com.ringtone.maker.Utils.Constants.ALARM_KEY
-                dbHelper.MarkSongAsSelected(title.toString(), MusicType.ALARM.toString(), duration * 1000, time / 1000, outPath, true)
-                dbHelper.MarkSongAsAlerted(title.toString(), MusicType.ALARM.toString(), duration * 1000, time, outPath, false)
+                dbHelper.MarkSongAsSelected(
+                    title.toString(),
+                    MusicType.ALARM.toString(),
+                    duration * 1000,
+                    time / 1000,
+                    outPath,
+                    true
+                )
+                dbHelper.MarkSongAsAlerted(
+                    title.toString(),
+                    MusicType.ALARM.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    false
+                )
             }
+
             FILE_KIND_Save -> {
-                dbHelper.MarkSongAsAlerted(title.toString(), MusicType.RINGTONE.toString(), duration * 1000, time, outPath, true)
-                dbHelper.MarkSongAsSelected(title.toString(), MusicType.RINGTONE.toString(), duration * 1000, time, outPath, true)
+                dbHelper.MarkSongAsAlerted(
+                    title.toString(),
+                    MusicType.RINGTONE.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    true
+                )
+                dbHelper.MarkSongAsSelected(
+                    title.toString(),
+                    MusicType.RINGTONE.toString(),
+                    duration * 1000,
+                    time,
+                    outPath,
+                    true
+                )
             }
         }
 
-        val warningSnackBar = Snacky.builder()
-                .setActivty(this)
-                .setBackgroundColor(ContextCompat.getColor(this,R.color.editor_toast_color))
-                .setText(this.getString(R.string.Edit_Done_Toast))
-                .setDuration(Snacky.LENGTH_LONG)
+        val warningSnackBar = Snacky.builder().setActivty(this)
+            .setBackgroundColor(ContextCompat.getColor(this, R.color.editor_toast_color))
+            .setText(this.getString(R.string.Edit_Done_Toast)).setDuration(Snacky.LENGTH_LONG)
 
         warningSnackBar.success().show()
-
-
 
 
     }
@@ -1413,10 +1548,8 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
         var path: String? = null
         for (i in 0..99) {
             val testPath: String
-            if (i > 0)
-                testPath = parentdir + filename + i + extension
-            else
-                testPath = parentdir + filename + extension
+            if (i > 0) testPath = parentdir + filename + i + extension
+            else testPath = parentdir + filename + extension
 
             try {
                 val f = RandomAccessFile(File(testPath), "r")
@@ -1448,9 +1581,11 @@ class Activity_Editor : AppCompatActivity(), MarkerView.MarkerListener, com.ring
                 val Displayedmins: String
                 val DisplayedSecs: String
                 val mins = java.lang.Double.parseDouble(time) % 3600 / 60
-                if (mins < 10) Displayedmins = "0" + mins.toInt().toString() else Displayedmins = mins.toInt().toString()
+                if (mins < 10) Displayedmins = "0" + mins.toInt().toString() else Displayedmins =
+                    mins.toInt().toString()
                 val secs = java.lang.Double.parseDouble(time) % 60
-                if (secs < 10) DisplayedSecs = "0" + secs.toInt().toString() else DisplayedSecs = secs.toInt().toString()
+                if (secs < 10) DisplayedSecs = "0" + secs.toInt().toString() else DisplayedSecs =
+                    secs.toInt().toString()
                 return Displayedmins + ":" + DisplayedSecs
             } else return ""
         }
